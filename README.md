@@ -65,4 +65,5 @@ FXVarietyPack free particle system for hit and explosion effects
 
 
 Note on AI Usage in the Project
+
 During the development of TankGame, LLMs (specifically Claude and Gemini) were employed as collaborative technical assistants to streamline the implementation of the distributed simulation architecture and data-transfer mechanisms.DIS System Integration: AI models assisted in designing and refining the integration of the DISRuntime plugin within Unreal Engine, ensuring correct lifecycle management of game managers (ATankGameDISGameManager, ATankGameInstance) and state handlers.Data Transfer & Packaging: LLMs were used primarily to write, structure, and optimize custom data-transfer packages - such as the byte serialization/deserialization logic for FTankRoundResultPacket and its transmission via DIS Signal PDUs and UUDPSubsystem.Workflow Acceleration: They helped troubleshoot event propagation flows, timer-based resend mechanisms for unreliable UDP channels, and synchronization patterns between local and remote entities.  
