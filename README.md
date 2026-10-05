@@ -1,6 +1,12 @@
 Automated Local Multi-Instance Execution (LaunchGame.bat).
 
-Overview & Purpose. To facilitate local testing and multi-player validation without requiring multiple distinct physical machines, the project includes an automation script named "LaunchGame.bat". This script handles the concurrent startup of two distinct game instances (Player 1 and Player 2) directly on the same local PC, leveraging Unreal Engine's standalone launch options and DIS application indexing.Implementation Mechanism. The launchgame.bat script executes two separate instances of the packaged game executable with customized command-line arguments:Player 1 Instance: Launches the executable passing ?PlayerID=1 as an option string parameter.Player 2 Instance: Launches a second concurrent instance passing ?PlayerID=2.Integration with Game Code Dynamic Role Assignment: During pawn spawning (ATankGameModeBase::SpawnDefaultPawnAtTransform_Implementation), the engine parses the PlayerID option from the launch string (UGameplayStatics::ParseOption).
+Overview & Purpose. To facilitate local testing and multi-player validation without requiring multiple distinct physical machines, the project includes an automation script named "LaunchGame.bat". This script handles the concurrent startup of two distinct game instances (Player 1 and Player 2) directly on the same local PC, leveraging Unreal Engine's standalone launch options and DIS application indexing.
+
+Implementation Mechanism.
+The launchgame.bat script executes two separate instances of the packaged game executable with customized command-line arguments:Player 1 Instance: Launches the executable passing ?PlayerID=1 as an option string parameter.Player 2 Instance: Launches a second concurrent instance passing ?PlayerID=2.
+
+Integration with Game Code Dynamic Role Assignment: During pawn spawning (ATankGameModeBase::SpawnDefaultPawnAtTransform_Implementation), the engine parses the PlayerID option from the launch string (UGameplayStatics::ParseOption).
+
 DIS Application Mapping: The parsed ID dynamically assigns the local DIS ApplicationID via the ADISGameManager and configures the corresponding tank meshes and spawn transforms (using target points tagged as Player1 or Player2).
 Network Loopback: Both instances communicate locally over the configured UDP port bindings (loopback interface), allowing full validation of DIS PDU transmissions, entity states, firing synchronization, and match state signaling (ATankGameStateBase) as if they were running across a distributed network.  
 
@@ -8,6 +14,7 @@ Network Loopback: Both instances communicate locally over the configured UDP por
 The project integrates Distributed Interactive Simulation (DIS) protocols within Unreal Engine using the DISRuntime plugin alongside custom game managers (ATankGameDISGameManager, UTankGameInstance) and subsystem handlers (UUDPSubsystem, UPDUProcessor).
 Core Entities: Tanks are mapped as DIS entities whose state and transforms are broadcasted and synchronized across the network.
 Georeferencing: The project leverages the GeoReferencing plugin to handle real-world coordinate mapping and spatial positioning required by standard DIS environments.
+
 2. Message / Event Flow
 Communication relies on standard DIS Protocol Data Units (PDUs) mapped over UDP:
 Entity State & Action PDUs: Entity transforms, orientation, and lifecycle events (such as firing and detonations via DISSendComponent and DISReceiveComponent) flow continuously between participating application nodes.
@@ -40,5 +47,10 @@ Reliable Transport Layer for Game Events: Transition critical game-state trigger
 Configuration UI & Auto-Discovery: Build an in-game lobby system to dynamically configure Site IDs, Application IDs, and network endpoints without relying solely on command-line launch options.
 
 Third Party AssetsI used Those third party assets alla downloaded from Fab:
-Free Tanks models (T-34-85 and M4A3E8 Sherman) made by "KCISA"Markov Pistol (PM) free model made by "TaigaForest"Construction Site vol.1 free props made by "Dekogon Studios"FXVarietyPack free particle system for hit and explosion effectsNote on AI Usage in the Project
+Free Tanks models (T-34-85 and M4A3E8 Sherman) made by "KCISA"
+Markov Pistol (PM) free model made by "TaigaForest"
+Construction Site vol.1 free props made by "Dekogon Studios"
+FXVarietyPack free particle system for hit and explosion effects
+
+Note on AI Usage in the Project
 During the development of TankGame, LLMs (specifically Claude and Gemini) were employed as collaborative technical assistants to streamline the implementation of the distributed simulation architecture and data-transfer mechanisms.DIS System Integration: AI models assisted in designing and refining the integration of the DISRuntime plugin within Unreal Engine, ensuring correct lifecycle management of game managers (ATankGameDISGameManager, ATankGameInstance) and state handlers.Data Transfer & Packaging: LLMs were used primarily to write, structure, and optimize custom data-transfer packages - such as the byte serialization/deserialization logic for FTankRoundResultPacket and its transmission via DIS Signal PDUs and UUDPSubsystem.Workflow Acceleration: They helped troubleshoot event propagation flows, timer-based resend mechanisms for unreliable UDP channels, and synchronization patterns between local and remote entities.  
